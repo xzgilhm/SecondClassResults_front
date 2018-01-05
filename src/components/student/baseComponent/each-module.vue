@@ -9,7 +9,9 @@
 		</p>
 		<i-form :model="formItem" :label-width="310" inline v-for="t in typeArray" :key=t.index>
 		    <Form-item :label="t.typeName">
-			    <each-select :moduleId="moduleId" :typeId="t.typeId"></each-select>
+			    <each-select :moduleId="moduleId" :typeId="t.typeId" :ref="'ses'+moduleId">
+			    	
+			    </each-select>
 			</Form-item>
 			<Form-item :label="t.evidenceTitle">
 		    	<Upload action="//jsonplaceholder.typicode.com/posts/">
@@ -37,6 +39,7 @@ export default {
             ]
 		}
 	},
+	//接收父组件each-module传过来的moduleId和moduleName
 	props: {
 		moduleId : {
 			type: String,
@@ -44,12 +47,16 @@ export default {
 		},
 		moduleName : String
 	},
+	//通过moduleId获取到typeId以及typename
 	mounted(){
 		this.axios.get('node/findTypeByModule/'+this.moduleId)
 			.then((data) => {
 				this.typeArray = data.data;
 				console.log(this.typeArray);
 			})
+	},
+	methods: {
+	
 	}
 }
 </script>

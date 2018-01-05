@@ -4,8 +4,8 @@
 
 <template>
 
-	<i-select :model.sync="select" placeholder="请选择" style="width:180px" @on-change="clickOption">
-	    <i-option  v-for="item in info" :key="item.index" :value="item.creditid">
+	<i-select  placeholder="请选择" style="width:180px" @on-change="clickOption" label-in-value>
+	    <i-option  v-for="item in info" :key="item.id" :value="item.creditid">
 	    	{{item.title}}
 	    </i-option>
 	</i-select>
@@ -16,10 +16,11 @@
 export default {
 	data(){
 		return{
-			select: "",
-			info: []
+			info: [],
+			selectVal : ''
 		}
 	},
+	//接收父组件each-select传过来的moduleId和typeId
 	props: {
 		moduleId : {
 			type: String,
@@ -34,8 +35,9 @@ export default {
 			})
 	},
 	methods: {
-		clickOption: function(val){
+		clickOption: function(val) {
 			console.log(val);
+			this.selectVal = val;
 		}
 	}
 }
