@@ -7,27 +7,21 @@
 		<p slot="title" style="text-align:left;font-size:20px">
 		{{moduleName}}
 		</p>
-		<i-form :model="formItem" :label-width="310" inline v-for="t in typeArray" :key=t.index>
-		    <Form-item :label="t.typeName">
-			    <each-select :moduleId="moduleId" :typeId="t.typeId" :ref="'ses'+moduleId">
-			    	
-			    </each-select>
-			</Form-item>
-			<Form-item :label="t.evidenceTitle">
-		    	<Upload action="//jsonplaceholder.typicode.com/posts/">
-		      		<i-button type="ghost" icon="ios-cloud-upload-outline">上传文件</i-button>
-		    	</Upload>
-	    	</Form-item>
-		</i-form>
+		<Row v-for="t in typeArray" :key=t.index>
+			<!-- 把每一行封装成一个组件 -->
+			<each-row :moduleId="moduleId" :typeId="t.typeId" :typeName="t.typeName"  :moduleName="moduleName" 
+			:evidenceTitle="t.evidenceTitle" :evidenceId="t.evidenceid" :isExit="isExit" :ref="'row' + t.typeId">
+			</each-row>
+		</Row>
 	</Card>
 </template>
 
 
 <script>
-import eachSelect from './each-select';
+import eachRow from './each-select';
 export default {
 	components:{
-        eachSelect
+        eachRow
     },
 	data(){
 		return{
@@ -45,18 +39,19 @@ export default {
 			type: String,
 			default: "0"
 		},
-		moduleName : String
+		moduleName: String,
+		isExit: Boolean
 	},
-	//通过moduleId获取到typeId以及typename
+	//通过moduleId获取到typeId、typename、evidenceTitle以及evidenceid
 	mounted(){
 		this.axios.get('node/findTypeByModule/'+this.moduleId)
-			.then((data) => {
-				this.typeArray = data.data;
-				console.log(this.typeArray);
-			})
+		.then((data) => {
+			this.typeArray = data.data;
+		})
+		
 	},
 	methods: {
-	
+		
 	}
 }
 </script>

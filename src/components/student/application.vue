@@ -4,14 +4,11 @@
 
 <template>
 	<div>
-		<!-- 顶栏 -->
-		<v-header></v-header>
-		<!-- 中间主体 -->
 		<Row type="flex" justify="center">
 			<i-col span="16" v-for="moduleItem in moduleList" :key="moduleItem.id">
-				<each-module :moduleId="moduleItem.id" :moduleName="moduleItem.modulename" :ref="'mod'+moduleItem.id">
+				<each-module :moduleId="moduleItem.id" :moduleName="moduleItem.modulename" :isExit="isExit" :ref="'mod'+ moduleItem.id">
                 </each-module>
-			</i-col>
+			</i-col> 
             <i-col span="16">
                 <i-button type="primary" style="margin-top:15px" @click="submitAllInfo"> 
                     submit 
@@ -19,14 +16,12 @@
             </i-col>
 		</Row>
 	</div>
-	
-	<!--底部-->
-	<!-- <div th:include="footer"></div> -->
 </template>
 
 <script>
 	import vHeader from '../common/header';
-	import eachModule from '../student/baseComponent/each-module';
+	import eachModule from './baseComponent/each-module';
+    import BUS from '../common/js/bus.js'
 	export default {
 		components:{
             vHeader,
@@ -35,7 +30,8 @@
 
         data(){
         	return {
-        		moduleList : []
+        		moduleList: [],
+                isExit: false
         	}
         },
         mounted(){
@@ -48,17 +44,22 @@
         		console.log(data.data);
         		if(data.code === 200){
         			this.moduleList = (data.data);
+                    console.log(this.moduleList);
         		}		
         	})
         },
         methods: {
+            //点击提交后事件
             submitAllInfo: function(){
-                var mod = this.$refs.mod01;
-                console.log(mod[0]);
-                console.log(mod[0].$refs);
-
-
-            }
+               this.axios.get('userSubmit/submit')
+                .then((data) => {
+                    console.log(data);
+                    if(data.code === 200){
+                        alert(data.data);
+                        this.$router.push('/editApplication');
+                    } 
+                });
+            },
         }
 		
 	}

@@ -40,7 +40,11 @@
                 <Icon type="arrow-down-b"></Icon>
               </i-button>
               <Dropdown-menu slot="list">
-                <Dropdown-item>修改个人信息</Dropdown-item>
+                <Dropdown-item>
+                  <i-button type="text" @click="editInfo">
+                    修改信息
+                  </i-button>
+                </Dropdown-item>
                 <Dropdown-item ><i-button type="text" @click="loginOut">注销</i-button></Dropdown-item>
               </Dropdown-menu>
             </Dropdown>
@@ -55,15 +59,22 @@
   export default {
     data(){
       return {
-        username: " "
+        username: " ",
+        auth: JSON.parse(sessionStorage.getItem('auth'))
       }
     },
     beforeMount(){
-      var auth = JSON.parse(sessionStorage.getItem('auth'));
-      console.log(auth);
-      this.username = auth.name;
+      // var auth = JSON.parse(sessionStorage.getItem('auth'));
+      console.log(this.auth);
+      this.username = this.auth.name;
     },
     methods: {
+      editInfo: function(){
+        //学生角色
+        if(this.auth.roleId === 5){
+          this.$router.push("/editApplication");
+        }
+      },
       //注销
       loginOut : function(){
         this.$router.push("/");
