@@ -9,14 +9,10 @@
 		</p>
 		<Row v-for="t in typeArray" :key=t.index>
 			<!-- 把每一行封装成一个组件 -->
-			<each-edit-row v-if="isExit" :moduleId="moduleId" :typeId="t.typeId" :typeName="t.typeName"  :moduleName="moduleName" 
-			:evidenceTitle="t.evidenceTitle" :evidenceId="t.evidenceid" :isExit="isExit" :ref="'row' + t.typeId">
-			</each-edit-row>
-			<each-row  v-else :moduleId="moduleId" :typeId="t.typeId" :typeName="t.typeName"  :moduleName="moduleName" 
+
+			<each-row  :moduleId="moduleId" :typeId="t.typeId" :typeName="t.typeName"  :moduleName="moduleName" 
 			:evidenceTitle="t.evidenceTitle" :evidenceId="t.evidenceid" :isExit="isExit" :ref="'row' + t.typeId">
 			</each-row>
-
-
 		</Row>
 	</Card>
 </template>
@@ -24,11 +20,9 @@
 
 <script>
 import eachRow from './each-select';
-import eachEditRow from './each-select-edit';
 export default {
 	components:{
-        eachRow,
-        eachEditRow
+        eachRow
     },
 	data(){
 		return{

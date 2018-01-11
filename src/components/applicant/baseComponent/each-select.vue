@@ -51,21 +51,23 @@
 			    </i-option>
 			</i-select>
 		</i-col>
-		<i-col span="3" v-if="show">
+		<i-col span="2" v-if="show">
 			{{ evidenceTitle }}
 		</i-col>
-		<i-col span="3" v-if="show" >
+		<i-col span="4" v-if="show" >
 			<!-- 把文件和所有信息一起传给后台 -->
 			<div v-show="uploadShow">
-				<Upload :action="PORT + 'userSubmit/upload'" :data="allInfo" ref="upload" show-upload-list :before-upload="handleUpload"> 
+				<Upload action="http://localhost:8081/student/submit" :data="allInfo" ref="upload" :before-upload="handleUpload" :on-progress="handleProgress" :on-success="handleSuccess" multiple> 
 					<i-button type="ghost" icon="ios-cloud-upload-outline" @click="showRowInfo">上传文件</i-button>
 				</Upload>
+				<div v-if="fileList !== null"  v-for="fl in fileList">Upload file: {{ fl.name }} <Button type="text" @click="upload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Click to upload' }}</Button></div>
+
 			</div>
 		</i-col>
 		<!-- 显示图片 -->
 		<i-col span="3" v-show="imgShow">
 			<div class="demo-upload-list">
-		           <img :src="PORT + 'images/' + imageSrc">
+		           <img :src="'http://localhost:8081/images/' + imageSrc">
 		           <div class="demo-upload-list-cover">
 		               <Icon type="ios-eye-outline" @click.native="handleView()"></Icon>
 		               <Icon type="ios-trash-outline" @click.native="handleRemove()"></Icon>
@@ -74,7 +76,7 @@
         </i-col>
 	</Row>
 	<Modal title="View Image" v-model="modalShow">
-        <img :src="PORT + 'images/' + imageSrc" v-if="modalShow" style="width: 100%">
+        <img :src="'http://localhost:8081/images/' + imageSrc" v-if="modalShow" style="width: 100%">
     </Modal>
 </div>
 </template>
@@ -84,7 +86,6 @@
 export default {
 	data(){
 		return{
-			PORT: _HTTP.PORT,
 			show: false,
 			rowShow: true,
 			uploadShow: true,
@@ -104,7 +105,10 @@ export default {
 			standardId: '',
 			standardName: '',
 			selectValue: '',
-			imageSrc: ''
+			imageSrc: '',
+			fileList: [],
+			loadingStatus: false,
+			uploadFlag: false
 		}
 	},
 	//接收父组件each-row传过来的值
@@ -121,6 +125,7 @@ export default {
 		isExit: Boolean
 	},
 	mounted(){
+
 		//通过moduleId和typeId获得standard信息
 		this.axios.get('node/findStardByMuduleIdAndTypeId/'+this.moduleId+"&"+this.typeId)
 			.then((data) => {
@@ -150,11 +155,28 @@ export default {
 				console.log(data);
 			})
         },
-        handleUpload(file) {
-        	console.log(file);
-        	console.log(this.allInfo);
+
+        handleUpload (file) {
+                this.fileList.push(file);
+                console.log(this.fileList);
+                return false;
+        },
+        upload() {
+                this.loadingStatus = true;
+                console.log("upload");
+                console.log(this.$refs.upload);
+                this.$refs.upload.uploadFiles(this.fileList);
+        },
+        handleProgress(event,file,fileList) {
+        	console.log(fileList);
         	return true;
         },
+        handleSuccess() {
+        	this.file = null;
+        	this.loadingStatus = false;
+        },
+
+
 		clickOn: function(value){
 			var strs = new Array();
 			strs = value.split("+");
@@ -168,13 +190,14 @@ export default {
 		},
 		showRowInfo: function(){
 			var auth = JSON.parse(sessionStorage.getItem('auth'));
-      		this.allInfo.userId = auth.id;
-      		this.allInfo.roleId = auth.roleId;
-      		this.allInfo.moduleId = this.moduleId;
-      		this.allInfo.typeId = this.typeId;
-      		this.allInfo.standardId = this.standardId;
-      		this.allInfo.creditId = this.creditId;
-      		this.allInfo.evidenceId = this.evidenceId;
+			var  _allInfo = this.allInfo;
+      		_allInfo.userId = auth.id;
+      		_allInfo.roleId = auth.roleId;
+      		_allInfo.moduleId = this.moduleId;
+      		_allInfo.typeId = this.typeId;
+      		_allInfo.standardId = this.standardId;
+      		_allInfo.creditId = this.creditId;
+      		_allInfo.evidenceId = this.evidenceId;
 		}
 	},
 	watch: {

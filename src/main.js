@@ -8,7 +8,7 @@ import iView from 'iview'
 import router from './router'
 import util from './utils/utils'
 import 'iview/dist/styles/iview.css'
-
+import './components/common/js/global.js'
 
 Vue.use(VueAxios, axios) 
 Vue.use(iView)

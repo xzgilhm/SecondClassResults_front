@@ -1,4 +1,4 @@
-<style scoped>
+/*<style scoped>*/
   .wrapper {
     position: relative;
     width: 100%;
@@ -80,6 +80,7 @@ export default {
           sessionStorage.setItem('auth',JSON.stringify(response.data));
           if(response.data.roleId === 5){
             this.$router.push('/application');
+            // this.$router.push('/applicant');
           }
           // this.$router.push('/about');
         }

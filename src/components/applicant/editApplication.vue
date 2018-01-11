@@ -25,7 +25,7 @@
 
 <script>
 	import vHeader from '../common/header';
-	import eachModule from '../student/baseComponent/each-module';
+	import eachModule from '../applicant/baseComponent/each-module';
 	export default {
 		components:{
             vHeader,
