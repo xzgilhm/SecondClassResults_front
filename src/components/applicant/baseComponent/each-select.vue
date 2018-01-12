@@ -40,7 +40,7 @@
 <template>
 <div>
 	<Row style="margin-top:15px" v-show="rowShow">
-		<i-col span="9">
+		<i-col span="7">
 			{{ typeName }} 
 		</i-col>
 		<i-col span="5">
@@ -54,30 +54,38 @@
 		<i-col span="2" v-if="show">
 			{{ evidenceTitle }}
 		</i-col>
-		<i-col span="4" v-if="show" >
-			<!-- 把文件和所有信息一起传给后台 -->
-			<div v-show="uploadShow">
-				<Upload action="http://localhost:8081/student/submit" :data="allInfo" ref="upload" :before-upload="handleUpload" :on-progress="handleProgress" :on-success="handleSuccess" multiple> 
-					<i-button type="ghost" icon="ios-cloud-upload-outline" @click="showRowInfo">上传文件</i-button>
-				</Upload>
-				<div v-if="fileList !== null"  v-for="fl in fileList">Upload file: {{ fl.name }} <Button type="text" @click="upload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Click to upload' }}</Button></div>
+		
+		<i-col span="3" v-if="show" >
+			<Upload
+			    ref="upload"
+			    :show-upload-list="false"
+			    :max-size="2048"
+			    :before-upload="handleUpload"
+			    multiple
+			    :data="allInfo"
+			    :action="PORT + 'userSubmit/upload'">
+			        <i-button type="ghost" icon="ios-cloud-upload-outline" >上传文件</i-button>
+			</Upload>
 
+		</i-col>
+		<i-col span="4" >
+			<div v-if="fileList !== null" > 
+				<p  v-for="fl in fileList">
+					{{ fl.name }} <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+					<Progress v-if="fl.showProgress" :percent="fl.percentage"  :loading="loadingStatus" hide-info></Progress>
+				</p> 
+				
 			</div>
 		</i-col>
-		<!-- 显示图片 -->
-		<i-col span="3" v-show="imgShow">
-			<div class="demo-upload-list">
-		           <img :src="'http://localhost:8081/images/' + imageSrc">
-		           <div class="demo-upload-list-cover">
-		               <Icon type="ios-eye-outline" @click.native="handleView()"></Icon>
-		               <Icon type="ios-trash-outline" @click.native="handleRemove()"></Icon>
-		           </div>
-	        </div>
-        </i-col>
+		<i-col v-if="show">
+			<div v-show = "isUpload">
+			<Button type="text" @click="upload" :loading="loadingStatus">
+						{{ loadingStatus ? 'Uploading' : 'Click to upload' }}
+			</Button>
+			</div>
+		</i-col>
 	</Row>
-	<Modal title="View Image" v-model="modalShow">
-        <img :src="'http://localhost:8081/images/' + imageSrc" v-if="modalShow" style="width: 100%">
-    </Modal>
+	
 </div>
 </template>
 
@@ -86,11 +94,13 @@
 export default {
 	data(){
 		return{
+			PORT: _HTTP.PORT,
 			show: false,
 			rowShow: true,
 			uploadShow: true,
 			imgShow: false,
 			modalShow: false,
+			isUpload: true,
 			allInfo: {
 				"userId": "",
 				"roleId": "",
@@ -108,7 +118,8 @@ export default {
 			imageSrc: '',
 			fileList: [],
 			loadingStatus: false,
-			uploadFlag: false
+			uploadFlag: false,
+			file: {}
 		}
 	},
 	//接收父组件each-row传过来的值
@@ -132,11 +143,7 @@ export default {
 				this.info = data.data;
 				// console.log(this.info); 
 			})
-		if(this.isExit){
-			this.rowShow = false;
-			this.uploadShow = false;
-			this.imgShow = true;
-		}
+
 	},
 	methods: {
 		handleView () {
@@ -157,35 +164,53 @@ export default {
         },
 
         handleUpload (file) {
+        		this.file = file;
                 this.fileList.push(file);
                 console.log(this.fileList);
                 return false;
         },
         upload() {
                 this.loadingStatus = true;
-                console.log("upload");
-                console.log(this.$refs.upload);
-                this.$refs.upload.uploadFiles(this.fileList);
+				var auth = JSON.parse(sessionStorage.getItem('auth'));                
+                var formdata = new FormData(); 
+                if(this.fileList.length > 0){
+                	for(var i=0;i<this.fileList.length;i++){
+	                	formdata.append('file',this.fileList[i]);
+	                	formdata.append('userId',auth.id);
+	                	formdata.append('roleId' , auth.roleId);
+			      		formdata.append('moduleId' , this.moduleId);
+			      		formdata.append('typeId' , this.typeId);
+			      		formdata.append('standardId' , this.standardId);
+			      		formdata.append('creditId' , this.creditId);
+			      		formdata.append('evidenceId' , this.evidenceId);
+                	}
+                }
+                else {
+                	formdata.append('file',"");
+	                formdata.append('userId',auth.id);
+	                formdata.append('roleId' , auth.roleId);
+			      	formdata.append('moduleId' , this.moduleId);
+			      	formdata.append('typeId' , this.typeId);
+			      	formdata.append('standardId' , this.standardId);
+			      	formdata.append('creditId' , this.creditId);
+			      	formdata.append('evidenceId' , this.evidenceId);
+                }
+                console.log(formdata);
+               	this.axios({
+                    url:'student/submit',
+                    method:'post',
+                    data:formdata,
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                }).then((data) => {
+                	console.log(data);
+                	this.loadingStatus = false;
+                })  
         },
-        handleProgress(event,file,fileList) {
-        	console.log(fileList);
-        	return true;
-        },
-        handleSuccess() {
-        	this.file = null;
-        	this.loadingStatus = false;
-        },
-
-
 		clickOn: function(value){
 			var strs = new Array();
 			strs = value.split("+");
 			this.standardId = strs[0];
 			this.creditId = strs[1];
-			//改变选择的标准后,如果没有显示上传则显示上传,否则清空上传列表
-			if(this.show){
-				this.$refs.upload.clearFiles();
-			}
 			this.show = true;
 		},
 		showRowInfo: function(){
@@ -198,19 +223,6 @@ export default {
       		_allInfo.standardId = this.standardId;
       		_allInfo.creditId = this.creditId;
       		_allInfo.evidenceId = this.evidenceId;
-		}
-	},
-	watch: {
-		selectValue: function(val){
-			this.showRowInfo();
-			this.allInfo["file"] = this.imageSrc;
-			this.axios({
-				method: "POST",
-				url: "userSubmit/changeSelect",
-				data: this.allInfo
-			}).then((data) => {
-				console.log(data);
-			})
 		}
 	}
 }

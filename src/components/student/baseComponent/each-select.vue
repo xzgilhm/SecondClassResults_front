@@ -1,81 +1,51 @@
 <style scoped>
- 	.demo-upload-list{
-        display: inline-block;
-        width: 60px;
-        height: 60px;
-        text-align: center;
-        line-height: 60px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        overflow: hidden;
-        background: #fff;
-        position: relative;
-        box-shadow: 0 1px 1px rgba(0,0,0,.2);
-        margin-right: 4px;
-    }
-    .demo-upload-list img{
-        width: 100%;
-        height: 100%;
-    }
-	.demo-upload-list-cover{
-        display: none;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0,0,0,.6);
-    }
-    .demo-upload-list:hover .demo-upload-list-cover{
-        display: block;
-    }
-    .demo-upload-list-cover i{
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
-        margin: 0 2px;
-    }
+
 </style>
 
-<template>
+<template> 
 <div>
 	<Row style="margin-top:15px" v-show="rowShow">
-		<i-col span="9">
+		<i-col span="8">
 			{{ typeName }} 
 		</i-col>
+		<!-- 选择栏 -->
 		<i-col span="5">
-			<i-select  placeholder="请选择" style="width:180px" v-model="selectValue" @on-change="clickOn">
-				<!-- 注意value的设置,不能选择一样的,如果一样会出现多选 -->
+			<i-select  placeholder="请选择" style="width:180px" v-model="selectValue" @on-change="chiceSelect">
 			    <i-option  v-for="item in info" :key="item.index" :value="item.id + '+' + item.creditid">
 			    	{{item.title}}
 			    </i-option>
 			</i-select>
 		</i-col>
+		<!-- 提示 -->
 		<i-col span="3" v-if="show">
 			{{ evidenceTitle }}
 		</i-col>
+		<!-- 上传 -->
 		<i-col span="3" v-if="show" >
-			<!-- 把文件和所有信息一起传给后台 -->
-			<div v-show="uploadShow">
-				<Upload :action="PORT + 'userSubmit/upload'" :data="allInfo" ref="upload" show-upload-list :before-upload="handleUpload"> 
-					<i-button type="ghost" icon="ios-cloud-upload-outline" @click="showRowInfo">上传文件</i-button>
-				</Upload>
+			<Upload
+			    ref="upload"
+			    :show-upload-list="false"
+			    :max-size="2048"
+			    :on-progress = "handleProgress"
+			    multiple
+			    :data="allInfo"
+			    :action="PORT + 'userSubmit/upload'">
+			        <i-button type="ghost" icon="ios-cloud-upload-outline" @click="getRowInfo">上传文件</i-button>
+			</Upload>
+		</i-col>
+		<!-- 上传列表 -->
+		<i-col span="4" v-if="show" >
+			<div  v-for="item in fileList">
+			    <template>
+			        <div class="demo-upload-list-cover">
+			        	{{ item.name }}
+			            <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+			        </div>
+			        <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+			    </template>
 			</div>
 		</i-col>
-		<!-- 显示图片 -->
-		<i-col span="3" v-show="imgShow">
-			<div class="demo-upload-list">
-		           <img :src="PORT + 'images/' + imageSrc">
-		           <div class="demo-upload-list-cover">
-		               <Icon type="ios-eye-outline" @click.native="handleView()"></Icon>
-		               <Icon type="ios-trash-outline" @click.native="handleRemove()"></Icon>
-		           </div>
-	        </div>
-        </i-col>
 	</Row>
-	<Modal title="View Image" v-model="modalShow">
-        <img :src="PORT + 'images/' + imageSrc" v-if="modalShow" style="width: 100%">
-    </Modal>
 </div>
 </template>
 
@@ -104,7 +74,8 @@ export default {
 			standardId: '',
 			standardName: '',
 			selectValue: '',
-			imageSrc: ''
+			imageSrc: '',
+			fileList: []
 		}
 	},
 	//接收父组件each-row传过来的值
@@ -125,48 +96,43 @@ export default {
 		this.axios.get('node/findStardByMuduleIdAndTypeId/'+this.moduleId+"&"+this.typeId)
 			.then((data) => {
 				this.info = data.data;
-				// console.log(this.info); 
 			})
-		if(this.isExit){
-			this.rowShow = false;
-			this.uploadShow = false;
-			this.imgShow = true;
-		}
 	},
 	methods: {
-		handleView () {
-                this.modalShow = true;
-        },
-        handleRemove(){
-        	this.uploadShow = true;
-        	this.imgShow = false;
-        	this.showRowInfo();
-			this.allInfo["file"] = "";
-			this.axios({
-				method: "POST",
-				url: "userSubmit/changeSelect",
-				data: this.allInfo
-			}).then((data) => {
-				console.log(data);
-			})
-        },
-        handleUpload(file) {
-        	console.log(file);
-        	console.log(this.allInfo);
-        	return true;
-        },
-		clickOn: function(value){
+		chiceSelect: function(value){
 			var strs = new Array();
 			strs = value.split("+");
 			this.standardId = strs[0];
 			this.creditId = strs[1];
-			//改变选择的标准后,如果没有显示上传则显示上传,否则清空上传列表
-			if(this.show){
-				this.$refs.upload.clearFiles();
-			}
 			this.show = true;
 		},
-		showRowInfo: function(){
+		handleProgress: function(event, file, fileList){
+			this.fileList = fileList;
+			console.log("handleProgress");
+			console.log(this.fileList);
+		},
+		handleRemove(file){
+			//页面上删除
+            this.fileList.splice(this.fileList.indexOf(file), 1);
+            console.log(file.name);
+            const _a = this.allInfo;
+            const send = {
+            	"mark" : _a.userId + _a.moduleId + _a.typeId,
+            	"fileName" : file.name
+            }
+            console.log(send); 
+            this.axios({
+            	method: 'POST',
+            	url: "userSubmit/removeFileList",
+            	data: {
+            	"mark" : _a.userId + _a.moduleId + _a.typeId,
+            	"fileName" : file.name
+            	}
+            }).then( (data)=> {
+            	console.log(data);
+            })
+		},
+		getRowInfo: function(){
 			var auth = JSON.parse(sessionStorage.getItem('auth'));
       		this.allInfo.userId = auth.id;
       		this.allInfo.roleId = auth.roleId;
@@ -179,8 +145,7 @@ export default {
 	},
 	watch: {
 		selectValue: function(val){
-			this.showRowInfo();
-			this.allInfo["file"] = this.imageSrc;
+			this.getRowInfo();
 			this.axios({
 				method: "POST",
 				url: "userSubmit/changeSelect",

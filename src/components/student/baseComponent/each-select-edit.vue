@@ -5,7 +5,7 @@
         height: 60px;
         text-align: center;
         line-height: 60px;
-        border: 1px solid transparent;
+        border: 1px solid transparent; 
         border-radius: 4px;
         overflow: hidden;
         background: #fff;
