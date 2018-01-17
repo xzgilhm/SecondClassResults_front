@@ -8,10 +8,13 @@
 		{{moduleName}}
 		</p>
 		<Row v-for="t in typeArray" :key=t.index>
-			<!-- 把每一行封装成一个组件 -->
+			
+			<!-- 编辑页面的行 -->
 			<each-edit-row v-if="isExit" :moduleId="moduleId" :typeId="t.typeId" :typeName="t.typeName"  :moduleName="moduleName" 
 			:evidenceTitle="t.evidenceTitle" :evidenceId="t.evidenceid" :isExit="isExit" :ref="'row' + t.typeId">
 			</each-edit-row>
+
+			<!-- 申请页面的行 -->
 			<each-row  v-else :moduleId="moduleId" :typeId="t.typeId" :typeName="t.typeName"  :moduleName="moduleName" 
 			:evidenceTitle="t.evidenceTitle" :evidenceId="t.evidenceid" :isExit="isExit" :ref="'row' + t.typeId">
 			</each-row>
@@ -54,9 +57,7 @@ export default {
 		this.axios.get('node/findTypeByModule/'+this.moduleId)
 		.then((data) => {
 			this.typeArray = data.data;
-			console.log("each-module: mounted")
 		})
-		
 	},
 	methods: {
 		

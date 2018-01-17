@@ -25,20 +25,20 @@ export default new Router({
       ]
     },
     //申请者路由
-    {
-      path: '/applicant',
-      component: resolve => require(['../components/applicant/index.vue'], resolve),
-      children: [
-        {
-          path: '',
-          component: resolve => require(['../components/applicant/application.vue'], resolve),
-        },
-        {
-          path: '/editApplication', 
-          component: resolve => require(['../components/applicant/editApplication.vue'], resolve)
-        }
-      ]
-    },
+    // {
+    //   path: '/applicant',
+    //   component: resolve => require(['../components/applicant/index.vue'], resolve),
+    //   children: [
+    //     {
+    //       path: '',
+    //       component: resolve => require(['../components/applicant/application.vue'], resolve),
+    //     },
+    //     {
+    //       path: '/editApplication', 
+    //       component: resolve => require(['../components/applicant/editApplication.vue'], resolve)
+    //     }
+    //   ]
+    // },
     {  
     	path: '/login',
       component: resolve => require(['../components/common/login.vue'], resolve)

@@ -4,7 +4,7 @@
 
 <template> 
 <div>
-	<Row style="margin-top:15px" v-show="rowShow">
+	<Row style="margin-top:15px">
 		<i-col span="8">
 			{{ typeName }} 
 		</i-col>
@@ -56,10 +56,6 @@ export default {
 		return{
 			PORT: _HTTP.PORT,
 			show: false,
-			rowShow: true,
-			uploadShow: true,
-			imgShow: false,
-			modalShow: false,
 			allInfo: {
 				"userId": "",
 				"roleId": "",
@@ -74,7 +70,6 @@ export default {
 			standardId: '',
 			standardName: '',
 			selectValue: '',
-			imageSrc: '',
 			fileList: []
 		}
 	},
@@ -88,8 +83,7 @@ export default {
 		typeId : String,
 		typeName: String,
 		evidenceTitle: String,
-		evidenceId: Number,
-		isExit: Boolean
+		evidenceId: Number
 	},
 	mounted(){
 		//通过moduleId和typeId获得standard信息
@@ -125,8 +119,8 @@ export default {
             	method: 'POST',
             	url: "userSubmit/removeFileList",
             	data: {
-            	"mark" : _a.userId + _a.moduleId + _a.typeId,
-            	"fileName" : file.name
+	            	"mark" : _a.userId + _a.moduleId + _a.typeId,
+	            	"fileName" : file.name
             	}
             }).then( (data)=> {
             	console.log(data);
