@@ -12,11 +12,11 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
-    "echarts": "^3.6.2",
     "iview": "^2.0.0-rc.17",
-    "vue": "^2.3.3",
+    "vue": "^2.5.2",
     "vue-axios": "^2.0.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "crypto-js":""
   },
   "devDependencies": {
     "autoprefixer": "^7.2.4",

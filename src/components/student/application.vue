@@ -5,11 +5,11 @@
 <template>
 	<div>
 		<Row type="flex" justify="center">
-			<i-col span="16" v-for="moduleItem in moduleList" :key="moduleItem.id">
+			<i-col span="24" v-for="moduleItem in moduleList" :key="moduleItem.id">
 				<each-module :moduleId="moduleItem.id" :moduleName="moduleItem.modulename" :isExit="isExit" :ref="'mod'+ moduleItem.id">
                 </each-module>
-			</i-col> 
-            <i-col span="16">
+			</i-col>  
+            <i-col span="24">
                 <i-button type="primary" style="margin-top:15px" @click="submitAllInfo"> 
                     submit 
                 </i-button>
@@ -21,7 +21,6 @@
 <script>
 	import vHeader from '../common/header';
 	import eachModule from './baseComponent/each-module';
-    import BUS from '../common/js/bus.js'
 	export default {
 		components:{
             vHeader,

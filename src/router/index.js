@@ -3,45 +3,34 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      redirect: '/login'
-    },
-    //学生界面
-    {
-      path: '/application',
-      component: resolve => require(['../components/student/index.vue'], resolve),
-      children: [
-        {
-          path: '',
-          component: resolve => require(['../components/student/application.vue'], resolve),
-        },
-        {
-          path: '/editApplication', 
-          component: resolve => require(['../components/student/editApplication.vue'], resolve)
-        }
-      ]
-    },
-    //申请者路由
-    // {
-    //   path: '/applicant',
-    //   component: resolve => require(['../components/applicant/index.vue'], resolve),
-    //   children: [
-    //     {
-    //       path: '',
-    //       component: resolve => require(['../components/applicant/application.vue'], resolve),
-    //     },
-    //     {
-    //       path: '/editApplication', 
-    //       component: resolve => require(['../components/applicant/editApplication.vue'], resolve)
-    //     }
-    //   ]
-    // },
-    {  
-    	path: '/login',
-      component: resolve => require(['../components/common/login.vue'], resolve)
-    }
-  ]  
-})
+let baseRoute = [
+  {
+    path: '/login',
+    name: '登陆',
+    component: (resolve) =>require(['../components/common/login.vue'],resolve)
+  },
+  {
+    path: '/401',
+    name: '无权访问',
+    component: (resolve) => require(['../views/common/401.vue'], resolve)
+  },
+  {
+    path: '/404',
+    name: '找不到页面',
+    component: (resolve) => require(['../views/common/404.vue'], resolve)
+  }
+];
+
+let router = new Router({
+  routes: baseRoute
+});
+
+router.beforeEach((to,from,next) => {
+    let routeName = to.meta.name || to.name;
+    window.document.title = (routeName ? routeName + ' - ' : '') + 'Second Class';
+    next();
+});
+
+export default router;
+
+

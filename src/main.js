@@ -17,6 +17,15 @@ Vue.use(util)
 
 Vue.config.productionTip = false
 
+//权限指令
+Vue.directive('has', {
+  bind: function(el, binding) {
+    if (!Vue.prototype.$_has(binding.value)) {
+      el.parentNode.removeChild(el);
+    }
+  }
+});
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

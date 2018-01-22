@@ -5,13 +5,13 @@
 <template>
 	<div>
 		<Row type="flex" justify="center">
-			<i-col span="16" v-for="moduleItem in moduleList" :key="moduleItem.id">
+			<i-col span="24" v-for="moduleItem in moduleList" :key="moduleItem.id">
 				<each-module :moduleId="moduleItem.id" :moduleName="moduleItem.modulename" :isExit="isExit" :ref="'mod'+ moduleItem.id">
                 </each-module>
 			</i-col> 
 
 
-            <i-col span="16">
+            <i-col span="24">
                 <i-button type="primary" style="margin-top:15px" @click="editInfo"> 
                     修改 
                 </i-button>
