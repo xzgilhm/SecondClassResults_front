@@ -3,11 +3,11 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-let baseRoute = [
+let baseRoute = [ 
   {
     path: '/login',
     name: '登陆',
-    component: (resolve) =>require(['../components/common/login.vue'],resolve)
+    component: (resolve) =>require(['../views/login.vue'],resolve)
   },
   {
     path: '/401',

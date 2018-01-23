@@ -1,35 +1,31 @@
 <style scoped>
-  .layout-header{
-    height: 1px;
-    background: #F0F0F0;
-    box-shadow: 0 1px 1px rgba(0,0,0,.1);
-    margin-bottom: 20px;
-  }
-  .layout-ceiling{
-    background: #FFFFFF;
-    padding: 20px 0;
+.layout{
+    border: 1px solid #d7dde4;
+    background: #f5f7f9;
+    position: relative;
+    border-radius: 4px;
     overflow: hidden;
-  }
-  .layout-ceiling-main{
-    float: right;
-    margin-right: 15px;
-  }
-  .layout-logo-left{
-    text-align: right;
-  } 
-  .layout-ceiling-main a{
-    color: #9ba7b5;
-    margin-right: 14px;
-    font-size: 12px;
-  }
-  a i{
-    margin-right: 3px;
-  }
+}
+.layout-logo{
+    width: 100px;
+    height: 30px;
+    background: #5b6270;
+    border-radius: 3px;
+    float: left;
+    position: relative;
+    top: 15px;
+    left: 20px;
+}
+.layout-nav{
+    width: 200px;
+    margin: 0 auto;
+    margin-right: 20px;
+}
 
 </style>
 <template>
   <!-- 居中对齐 -->
-  <Row type="flex" justify="center" >
+  <!-- <Row type="flex" justify="center" >
     <i-col span="24">
       <div class="header">
         <div class="layout-ceiling">
@@ -53,7 +49,25 @@
         <div class="layout-header"></div>
       </div>
     </i-col>
-  </Row>
+  </Row> -->
+  <div class = "layout">
+    <Header>
+      <Menu mode="horizontal" theme="dark" active-name="1">
+          <div class="layout-logo"></div>
+          <div class="layout-nav">
+              <MenuItem name="1">
+                  <Icon type="ios-navigate"></Icon>
+                  首页
+              </MenuItem>
+              <MenuItem name="2">
+                  <Icon type="ios-keypad"></Icon>
+                  退出
+              </MenuItem>
+              
+          </div>
+      </Menu>
+    </Header>
+  </div>
 </template>
 <script>
   export default {
@@ -64,9 +78,7 @@
       }
     },
     beforeMount(){
-      // var auth = JSON.parse(sessionStorage.getItem('auth'));
-      console.log(this.auth);
-      this.username = this.auth.name;
+      
     },
     methods: {
       editInfo: function(){
@@ -78,7 +90,7 @@
       //注销
       loginOut : function(){
         this.$router.push("/");
-        sessionStorage.auth = null;
+        sessionStorage.clear();
       }
     }
 
