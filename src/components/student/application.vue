@@ -6,15 +6,19 @@
 	<div>
 		<Row type="flex" justify="center">
 			<i-col span="24" v-for="moduleItem in moduleList" :key="moduleItem.id">
-				<each-module :moduleId="moduleItem.id" :moduleName="moduleItem.modulename" :isExit="isExit" :ref="'mod'+ moduleItem.id">
+				<each-module :moduleId="moduleItem.id" :isExit="isExit" :ref="'mod'+ moduleItem.id">
+                    <h3 style="text-align:left;font-size:20px">{{moduleItem.modulename}}</h3>
                 </each-module>
-			</i-col>  
-            <i-col span="24">
+			</i-col>    
+            
+            <i-col span="24"> 
                 <i-button type="primary" style="margin-top:15px" @click="submitAllInfo"> 
                     submit 
                 </i-button>
             </i-col>
 		</Row>
+
+        
 	</div>
 </template>
 
@@ -44,6 +48,7 @@
         		console.log(data.data);
         		if(data.code === 200){
         			this.moduleList = (data.data);
+                    console.log("moduleName")
                     console.log(this.moduleList);
         		}		
         	})

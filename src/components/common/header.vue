@@ -24,44 +24,19 @@
 
 </style>
 <template>
-  <!-- 居中对齐 -->
-  <!-- <Row type="flex" justify="center" >
-    <i-col span="24">
-      <div class="header">
-        <div class="layout-ceiling">
-          <span class="layout-ceiling-main"> 
-            <Dropdown trigger="click">
-              <i-button type="primary">
-                {{username}}
-                <Icon type="arrow-down-b"></Icon>
-              </i-button>
-              <Dropdown-menu slot="list">
-                <Dropdown-item>
-                  <i-button type="text" @click="editInfo">
-                    修改信息
-                  </i-button>
-                </Dropdown-item>
-                <Dropdown-item ><i-button type="text" @click="loginOut">注销</i-button></Dropdown-item>
-              </Dropdown-menu>
-            </Dropdown>
-          </span>
-        </div>
-        <div class="layout-header"></div>
-      </div>
-    </i-col>
-  </Row> -->
+
   <div class = "layout">
     <Header>
-      <Menu mode="horizontal" theme="dark" active-name="1">
+      <Menu mode="horizontal" theme="dark" active-name="1" @on-select="routeTo">
           <div class="layout-logo"></div>
           <div class="layout-nav">
               <MenuItem name="1">
-                  <Icon type="ios-navigate"></Icon>
-                  首页
+                <Icon type="home"></Icon>
+                首页
               </MenuItem>
               <MenuItem name="2">
-                  <Icon type="ios-keypad"></Icon>
-                  退出
+                <Icon type="android-exit"></Icon>
+                退出
               </MenuItem>
               
           </div>
@@ -70,6 +45,7 @@
   </div>
 </template>
 <script>
+import * as util from '@/assets/util.js';
   export default {
     data(){
       return {
@@ -81,16 +57,26 @@
       
     },
     methods: {
-      editInfo: function(){
-        //学生角色
-        if(this.auth.roleId === 5){
-          this.$router.push("/editApplication");
+      routeTo: function(e){
+        if(e === '1'){
+            this.$router.push("/");
         }
-      },
-      //注销
-      loginOut : function(){
-        this.$router.push("/");
-        sessionStorage.clear();
+        else if(e === '2'){
+        console.log(e);
+
+            this.$Modal.confirm({
+                title: '',
+                content: '<p>是否退出?</p>',
+                onOk: () => {
+                    this.$Message.info('成功退出!');
+                    util.session('token','');
+                    this.$router.push("/login");
+                },
+                onCancel: () => {
+                    this.$Message.info('取消点击');
+                }
+            });
+        }
       }
     }
 

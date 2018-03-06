@@ -74,30 +74,11 @@ export default {
         url: "/login",
         data: req
       }).then((response)=>{
-        // //登陆成功,对角色进行判断
-        // console.log(response);
-        // if(response.code===200){
-        //   //把用户的信息存储在sessionStorage的auth中
-        //   sessionStorage.setItem('auth',JSON.stringify(response.data));
-        //   if(response.data.role_id === 5){
-        //     this.$router.push('/application');
-        //     // this.$router.push('/applicant');
-        //   }
-        //   // this.$router.push('/about');
-        // }
-        // else{
-        //   this.error = true;
-        //   this.errorMsg = response.message;
-        //   // this.refreshCode();
-        // }
-        // console.log(response)
         if(response.code === 200){
           util.session('token',response.data);
-          console.log(this.$router.currentRoute.query.from);
-          this.$emit('login',this.$router.currentRoute.query.from);
-          // this.$emit('login','/index');
+          console.log(response.data);
           // console.log(this.$router.currentRoute.query.from);
-          // console.log(util.session('token'));
+          this.$emit('login',this.$router.currentRoute.query.from);
         }
         else{
           this.error = true;

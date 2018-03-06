@@ -6,19 +6,19 @@
 <div>
 	<Row style="margin-top:15px">
 		<i-col span="8">
-			{{ typeName }} 
+			<slot name="typeName"></slot>
 		</i-col>
 		<!-- 选择栏 -->
 		<i-col span="5">
 			<i-select  placeholder="请选择" style="width:180px" v-model="selectValue" @on-change="chiceSelect">
-			    <i-option  v-for="item in info" :key="item.index" :value="item.id + '+' + item.creditid">
+			    <i-option  v-for="item in SelectInfo" :key="item.index" :value="item.standardid + '+' + item.creditid">
 			    	{{item.title}}
 			    </i-option>
 			</i-select>
 		</i-col>
 		<!-- 提示 -->
 		<i-col span="3" v-if="show">
-			{{ evidenceTitle }}
+			<slot name="evidenceTitle"></slot>
 		</i-col>
 		<!-- 上传 -->
 		<i-col span="3" v-if="show" >
@@ -26,6 +26,7 @@
 			    ref="upload"
 			    :show-upload-list="false"
 			    :max-size="2048"
+			    :before-upload = "handleUpload"
 			    :on-progress = "handleProgress"
 			    multiple
 			    :data="allInfo"
@@ -51,6 +52,7 @@
 
 
 <script>
+import * as util from '@/assets/util.js';
 export default {
 	data(){
 		return{
@@ -65,7 +67,7 @@ export default {
 				"creditId": "",
 				"evidenceId": ""
 			},
-			info: [],
+			SelectInfo: [],
 			creditId: '',
 			standardId: '',
 			standardName: '',
@@ -79,18 +81,23 @@ export default {
 			type: String,
 			default: "0"
 		},
-		moduleName: String,
 		typeId : String,
-		typeName: String,
-		evidenceTitle: String,
 		evidenceId: Number
 	},
 	mounted(){
 		//通过moduleId和typeId获得standard信息
-		this.axios.get('node/findStardByMuduleIdAndTypeId/'+this.moduleId+"&"+this.typeId)
+		// this.axios.get('node/findStardByMuduleIdAndTypeId/'+this.moduleId+"&"+this.typeId)
+		// 	.then((data) => {
+		// 		this.SelectInfo = data.data;
+		// 	});
+
+
+		this.axios.get('node/getStandard?moduleId='+this.moduleId+"&typeId="+this.typeId)
 			.then((data) => {
-				this.info = data.data;
-			})
+				console.log("xxxx");
+				console.log(data);
+				this.SelectInfo = data.data;
+			});	
 	},
 	methods: {
 		chiceSelect: function(value){
@@ -99,6 +106,17 @@ export default {
 			this.standardId = strs[0];
 			this.creditId = strs[1];
 			this.show = true;
+		},
+		handleUpload: function(file){
+			console.log("xxxxx");
+			console.log(file);
+			console.log(this.fileList);
+			for(let i=0; i<this.fileList.length; i++){
+				if(file.name === this.fileList[i].name){
+					alert("有同名文件");
+					return false;
+				}
+			}
 		},
 		handleProgress: function(event, file, fileList){
 			this.fileList = fileList;
@@ -127,7 +145,8 @@ export default {
             })
 		},
 		getRowInfo: function(){
-			var auth = JSON.parse(sessionStorage.getItem('auth'));
+			var auth = util.session('token');
+			console.log(auth);
       		this.allInfo.userId = auth.id;
       		this.allInfo.roleId = auth.roleId;
       		this.allInfo.moduleId = this.moduleId;
@@ -140,6 +159,7 @@ export default {
 	watch: {
 		selectValue: function(val){
 			this.getRowInfo();
+			console.log(this.allInfo);
 			this.axios({
 				method: "POST",
 				url: "userSubmit/changeSelect",

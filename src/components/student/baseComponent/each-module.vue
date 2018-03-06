@@ -4,23 +4,24 @@
 
 <template>
 	<Card  style="margin-top:15px">
-		<p slot="title" style="text-align:left;font-size:20px">
-		{{moduleName}}
-		</p>
+		
+		<slot slot="title"></slot>
+
 		<Row v-for="t in typeArray" :key=t.index>
-			
 			<!-- 编辑页面的行 -->
 			<each-edit-row v-if="isExit" :moduleId="moduleId" :typeId="t.typeId" :typeName="t.typeName"  :moduleName="moduleName" 
 			:evidenceTitle="t.evidenceTitle" :evidenceId="t.evidenceid" :isExit="isExit" :ref="'row' + t.typeId">
 			</each-edit-row>
 
 			<!-- 申请页面的行 -->
-			<each-row  v-else :moduleId="moduleId" :typeId="t.typeId" :typeName="t.typeName"  :moduleName="moduleName" 
-			:evidenceTitle="t.evidenceTitle" :evidenceId="t.evidenceid" :isExit="isExit" :ref="'row' + t.typeId">
-			</each-row>
+			<each-row  v-else :moduleId="moduleId" :typeId="t.typeId"  :evidenceTitle="t.evidenceTitle" :evidenceId="t.evidenceid" :ref="'row' + t.typeId">
 
-
+				<p slot="typeName"> {{t.typeName}}</p>
+				<p slot="evidenceTitle"> {{t.evidenceTitle}} </p>
+				
+			</each-row> 
 		</Row>
+
 	</Card>
 </template>
 
@@ -49,7 +50,6 @@ export default {
 			type: String,
 			default: "0"
 		},
-		moduleName: String,
 		isExit: Boolean
 	},
 	//通过moduleId获取到typeId、typename、evidenceTitle以及evidenceid

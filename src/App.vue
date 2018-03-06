@@ -8,29 +8,6 @@
     background-color: #F0F0F0;
   }
 
-  
-  .ivu-table .table-data2-serious{
-    background-color: #FD5200;
-  }
-  .ivu-table td.table-data2-general-serious{
-    background-color: #FFCD14;
-  }
-  .ivu-table  td.table-data2-warn{
-    background-color: #EFE42A;
-  }
-  .ivu-table td.table-data2-info{
-    background-color: #7499FF;
-  }
-  .ivu-table  .table-general-serious{
-    background-color: #FFCD14;
-  }
-  .ivu-table  .table-serious{  
-    background-color: #FD5200 ;
-  }
-  .ivu-table td.table-problem{
-    background-color: #FFCD14;
-  } 
-
 
 </style>
 
@@ -83,7 +60,7 @@ export default {
           menus: [
             {
               id: "A01",
-              name: "第二课堂",
+              name: "第二课堂", 
               route: "secondClass",
               summary: ""
             },
@@ -99,6 +76,13 @@ export default {
               name: "修改",
               parent_id: "A01",
               route: "editApplication",
+              summary: ""
+            },
+            {
+              id: "B03",
+              name: "重构",
+              parent_id: "A01",
+              route: "test",
               summary: ""
             }
           ],

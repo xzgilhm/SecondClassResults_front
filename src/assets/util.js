@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-
+ 
 //sessionStorage
 export const session = function(key, value){
   if (value === void(0)) {
@@ -15,6 +15,7 @@ export const session = function(key, value){
   else { 
     if (typeof(value)==="object" || Array.isArray(value)) {
       value = 'autostringify-' + JSON.stringify(value);
+      // value = JSON.stringify(value);
     };
     return sessionStorage.setItem(key, value);
     if (!localUser || !localUser.token) {

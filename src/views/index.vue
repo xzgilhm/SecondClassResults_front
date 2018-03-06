@@ -5,7 +5,7 @@
     position: relative;
     border-radius: 4px;
     overflow: hidden;
-    height: 100%;
+    height: 90%;
 }
 .breadcrumb{
   margin: 12px 0px;
@@ -16,9 +16,9 @@
 <div>
   <v-header></v-header>
 
-   <Layout class="dash-board">
+  <Layout class="dash-board">
       <Sider hide-trigger :style="{background: '#fff'}">
-        <Menu  theme="light" width="auto">
+        <Menu  theme="light" width="auto" @on-select="routeTo">
             <template v-for="(route,index) in menus">
               <template v-if="route.children">
                 <Submenu :key="index" :name="index">
@@ -26,8 +26,8 @@
                     <Icon type="ios-navigate"></Icon>
                     {{route.name || route.meta.name}} 
                   </template>
-                  <MenuItem v-for="(cRoute,cIndex) in route.children" :key="cIndex" :name="cRoute.name" >
-                    <p @click="routeMsg(cRoute)">{{ cRoute.name }}</p>
+                  <MenuItem v-for="(cRoute,cIndex) in route.children" :key="cIndex" :name="cRoute.path" >
+                    <p>{{ cRoute.name }}</p>
                   </MenuItem>
                 </Submenu>
               </template>
@@ -54,7 +54,7 @@
                         <router-view></router-view> 
                     </Content>
       </Layout>
-    </Layout>
+  </Layout>
 </div>
 
 </template>
@@ -82,21 +82,11 @@ export default {
   },
   methods: {
     logout: function() {
-      this.$confirm("确定退出?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "info"
-      })
-        .then(() => {
-          this.$emit("logout");
-        })
-        .catch(() => {});
+     
     },
-    routeMsg: function(val){
-      console.log(val.path);
-      // console.log(this);
-      this.$router.push(val.path);
-      // this.$router.push("/" + val.path);
+    routeTo(e){
+      console.log(e);
+      this.$router.push(e);
     }
   },
   created: function() {
